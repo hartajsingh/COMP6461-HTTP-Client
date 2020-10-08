@@ -7,12 +7,24 @@
     <groupId>org.example</groupId>
     <artifactId>HTTPClient</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>7</source>
+                    <target>7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-    <dependencies>
-        <dependency>
-            <groupId>net.sf.jopt-simple</groupId>
-            <artifactId>jopt-simple</artifactId>
-            <version>6.0-alpha-3</version>
-        </dependency>
-    </dependencies>
+    <!--    <dependencies>-->
+<!--        <dependency>-->
+<!--            <groupId>net.sf.jopt-simple</groupId>-->
+<!--            <artifactId>jopt-simple</artifactId>-->
+<!--            <version>6.0-alpha-3</version>-->
+<!--        </dependency>-->
+<!--    </dependencies>-->
 </project>
