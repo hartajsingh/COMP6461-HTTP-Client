@@ -9,14 +9,17 @@ import static java.util.Arrays.asList;
 
 public class httpc {
     public static void main(String[] args) throws IOException {
+
+        //This is parser. We add our options here and specify their properties.
         OptionParser parser = new OptionParser() {
             {
-                accepts("v","Verbose")
-                .withOptionalArg()
-                .defaultsTo("false");
+                //accepts means '-v'
+                accepts("v", "Verbose")
+                        .withOptionalArg()
+                        .defaultsTo("false");
 
-                acceptsAll(asList("http:","'http:"));
-
+                //acceptsAll means '-v', '-verbose' or more are same
+                acceptsAll(asList("http:", "'http:"));
 
 
             }
@@ -24,6 +27,7 @@ public class httpc {
 
         String input;
 
+        //read input until client press 'return' key
         while ((input = readCommand()).length() > 0) {
             System.out.println("Input: " + input);
             handleInput(parser, input);
@@ -32,29 +36,36 @@ public class httpc {
         System.out.println("Exiting...");
     }
 
+    /**
+     * This function handles the given input according to present options and arguments
+     *
+     * @param parser
+     * @param input
+     */
     private static void handleInput(OptionParser parser, String input) {
         if (validAndNotHelpCmd(input)) {
-            OptionSet opts = parser.parse(input.split(" "));
-            List nonOpts=opts.nonOptionArguments();
-System.out.println("Verbose: "+opts.valueOf("v"));
 
-            if(nonOpts.size()!=3){
-                for(Object o:nonOpts){
+            //parser parse the given input and divides into options and arguments
+            OptionSet opts = parser.parse(input.split(" "));
+            List nonOpts = opts.nonOptionArguments();
+
+            //still working below
+            System.out.println("Verbose: " + opts.valueOf("v"));
+
+            if (nonOpts.size() != 3) {
+                for (Object o : nonOpts) {
                     System.out.println(o.toString());
                 }
                 System.out.println("Invalid Command. here");
 //                printHelp("httpc");
-            }
-            else{
-                String url=nonOpts.get(2).toString();
+            } else {
+                String url = nonOpts.get(2).toString();
 
-                if(nonOpts.contains("get")){
+                if (nonOpts.contains("get")) {
 
-                }
-                else if(nonOpts.contains("post")){
+                } else if (nonOpts.contains("post")) {
 
-                }
-                else{
+                } else {
 
                 }
             }
@@ -69,13 +80,13 @@ System.out.println("Verbose: "+opts.valueOf("v"));
      * @return
      */
     private static boolean validAndNotHelpCmd(String input) {
+
         if (input.startsWith("httpc get ") || input.startsWith("httpc post ")) {
-            if(input.contains("http:")){
-                input.replace("http:","-http:");
-            }
-            else if(input.contains("'http:")){
-                input.replace("'http:","-http:");
-                input.substring(0,input.length()-2);
+            if (input.contains("http:")) {
+                input.replace("http:", "-http:");
+            } else if (input.contains("'http:")) {
+                input.replace("'http:", "-http:");
+                input.substring(0, input.length() - 2);
             }
             return true;
         }
@@ -86,8 +97,7 @@ System.out.println("Verbose: "+opts.valueOf("v"));
             option = "get";
         } else if (input.trim().equalsIgnoreCase("httpc help post")) {
             option = "post";
-        }
-        else if (!input.startsWith("httpc help")) {
+        } else if (!input.startsWith("httpc help")) {
             System.out.println("Invalid Command.");
         }
 
