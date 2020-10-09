@@ -16,9 +16,10 @@ public class Command {
     private String fArg;
     private String url;
 
-    public void setHttpc(boolean httpc){
-        this.httpc=httpc;
+    public void setHttpc(boolean httpc) {
+        this.httpc = httpc;
     }
+
     public void setHelp(boolean help) {
         this.help = help;
     }
@@ -57,8 +58,8 @@ public class Command {
     }
 
 
-    public void setUrl(String url){
-        this.url=url;
+    public void setUrl(String url) {
+        this.url = url.replace("'", "");
     }
 
     public void setdArg(String dArg) {
@@ -69,7 +70,6 @@ public class Command {
     public void setfArg(String fArg) {
         this.fArg = fArg;
     }
-
 
 
     public Command() {
@@ -84,28 +84,55 @@ public class Command {
         hArg = null;
         dArg = null;
         fArg = null;
-        url=null;
+        url = null;
     }
 
 
     public void addHArg(String arg) {
         hArg.add(arg);
     }
-    public String parse(){
+
+    public String toString() {
         String s = "";
-        s+="httpc: "+httpc+", ";
-        s+="help: "+help+", ";
-        s+="get: "+get+", ";
-        s+="post: "+post+", ";
-        s+="v: "+v+", ";
-        s+="h: "+h+", ";
-        s+="d: "+f+", ";
-        s+="dArg: "+dArg+", ";
-        s+="fArg: "+fArg+", ";
-        s+="url: "+url+", ";
+        s += "httpc: " + httpc + ", ";
+        s += "help: " + help + ", ";
+        s += "get: " + get + ", ";
+        s += "post: " + post + ", ";
+        s += "v: " + v + ", ";
+        s += "h: " + h + ", ";
+        s += "d: " + f + ", ";
+        s += "dArg: " + dArg + ", ";
+        s += "fArg: " + fArg + ", ";
+        s += "url: " + url + ", ";
         return s;
     }
 
+    public boolean isValid() {
+        String option = "";
+        if (!httpc) {
+            option = "invalid";
+        } else if (help) {
+            if (get) {
+                option = "get";
+            } else if (post) {
+                option = "post";
+            } else {
+                option = "httpc";
+            }
+
+        } else if ((!get || post) && (get || !post)) {
+            option = "invalid";
+        } else if (url == null) {
+            option = "invalid";
+        }
+
+        if (!option.isEmpty()) {
+            printHelp(option);
+            return false;
+        }
+
+        return true;
+    }
 
 
     void printHelp(String option) {

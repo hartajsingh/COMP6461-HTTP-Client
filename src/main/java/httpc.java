@@ -11,7 +11,6 @@ import static java.util.Arrays.asList;
 public class httpc {
     public static void main(String[] args) throws IOException {
 
-
         String input;
 
         //read input until client press 'return' key
@@ -21,22 +20,22 @@ public class httpc {
             input.replace("--", "-");
 
             handleInput(cmd, input);
-            System.out.println(cmd.parse());
+            System.out.println(cmd.toString());
         }
 
         System.out.println("Exiting...");
     }
 
     private static void handleInput(Command cmd, String input) {
-        while(input.length()>0){
-            System.out.println("handling input with: "+input);
+        while (input.length() > 0) {
+            System.out.println("handling input with: " + input);
 
             int ind = getFirstWordIndx(input);
             String word = input.substring(0, ind);
 
-            if(ind==input.length()){
-                input="";
-            }else{
+            if (ind == input.length()) {
+                input = "";
+            } else {
                 input = input.substring(ind + 1);
             }
 
@@ -45,7 +44,7 @@ public class httpc {
                     int argind = getFirstWordIndx(input);
                     String arg = input.substring(0, argind);
                     input = input.substring(argind + 1);
-                    if(arg.isEmpty()){
+                    if (arg.isEmpty()) {
                         cmd.printHelp(word);
                         return;
                     }
@@ -54,33 +53,30 @@ public class httpc {
                     handleOption(cmd, word);
                 }
 
-            }else if(word.contains("http:")){
+            } else if (word.contains("http:")) {
                 cmd.setUrl(word);
-            }
-            else{
+            } else {
                 cmd.printHelp(word);
                 return;
             }
         }
 
-
+        if (cmd.isValid()) {
+            HTTPClient client = new HTTPClient(cmd);
+        }
 
     }
 
     private static void handleOption(Command cmd, String option) {
         if (option.equalsIgnoreCase("httpc")) {
             cmd.setHttpc(true);
-        }
-        else if (option.equalsIgnoreCase("help")) {
+        } else if (option.equalsIgnoreCase("help")) {
             cmd.setHelp(true);
-        }
-        else if (option.equalsIgnoreCase("get")) {
+        } else if (option.equalsIgnoreCase("get")) {
             cmd.setGet(true);
-        }
-        else if (option.equalsIgnoreCase("post")) {
+        } else if (option.equalsIgnoreCase("post")) {
             cmd.setPost(true);
-        }
-        else if (option.equalsIgnoreCase("-v")) {
+        } else if (option.equalsIgnoreCase("-v")) {
             cmd.setV(true);
         }
     }
@@ -92,8 +88,7 @@ public class httpc {
         } else if (option.equalsIgnoreCase("-d")) {
             cmd.setD(true);
             cmd.setdArg(arg);
-        }
-        else if (option.equalsIgnoreCase("-f")) {
+        } else if (option.equalsIgnoreCase("-f")) {
             cmd.setF(true);
             cmd.setfArg(arg);
         }
