@@ -40,7 +40,7 @@ public class HTTPClient {
             return reply;
         } else {
             String[] splitReply = reply.split("\\{", 2);
-            if(splitReply.length == 1) {
+            if (splitReply.length == 1) {
                 return reply;
             } else {
                 return splitReply[1].trim();
@@ -88,9 +88,9 @@ public class HTTPClient {
             }
         }
 
-        if(cmd.isD() || cmd.isF()) {
-            String arg = cmd.isD()?cmd.getdArg(): cmd.getfArg();
-            if(arg.startsWith("'") || arg.startsWith("\"")) {
+        if (cmd.isD() || cmd.isF()) {
+            String arg = cmd.isD() ? cmd.getdArg() : cmd.getfArg();
+            if (arg.startsWith("'") || arg.startsWith("\"")) {
                 arg = arg.substring(1, arg.length() - 1);
                 send.println("Content-Length: " + arg.length());
                 send.println("");
@@ -98,8 +98,9 @@ public class HTTPClient {
             } else {
                 send.println(arg);
             }
+        } else {
+            send.println("");
         }
-
         send.flush();
 
         StringBuffer reply = new StringBuffer();

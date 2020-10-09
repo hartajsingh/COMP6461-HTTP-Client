@@ -106,7 +106,7 @@ public class httpc {
         }
     }
 
-    private static void handleOptionAndArg(Command cmd, String option, String arg){
+    private static void handleOptionAndArg(Command cmd, String option, String arg) {
         if (option.equalsIgnoreCase("-h")) {
             cmd.setH(true);
             cmd.addHArg(arg);
@@ -115,21 +115,20 @@ public class httpc {
             cmd.setdArg(arg);
         } else if (option.equalsIgnoreCase("-f")) {
             cmd.setF(true);
-            try{
-            BufferedReader br=new BufferedReader(new FileReader(arg));
-            arg="\'";
-            String s=br.readLine();
-            while(s!=null){
-                arg+=s;
-                s=br.readLine();
-            }
-            }
-            catch(Exception e){
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(arg));
+                arg = "\'";
+                String s = br.readLine();
+                while (s != null) {
+                    arg += s;
+                    s = br.readLine();
+                }
+            } catch (Exception e) {
                 System.out.println("Error reading file.");
                 cmd.setInvalid();
             }
 
-            cmd.setfArg(arg+"\'");
+            cmd.setfArg(arg + "\'");
         } else if (option.equalsIgnoreCase("-o")) {
             cmd.setO(arg);
         }
