@@ -1,6 +1,8 @@
 
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -9,100 +11,132 @@ import static java.util.Arrays.asList;
 public class httpc {
     public static void main(String[] args) throws IOException {
 
-        //This is parser. We add our options here and specify their properties.
-        OptionParser parser = new OptionParser() {
-            {
-                //accepts means '-v'
-                accepts("v", "Verbose")
-                        .withOptionalArg()
-                        .defaultsTo("false");
-
-                //acceptsAll means '-v', '-verbose' or more are same
-                acceptsAll(asList("http:", "'http:"));
-
-
-            }
-        };
 
         String input;
 
         //read input until client press 'return' key
         while ((input = readCommand()).length() > 0) {
             System.out.println("Input: " + input);
-            handleInput(parser, input);
+            Command cmd = new Command();
+            input.replace("--", "-");
+
+            handleInput(cmd, input);
+            System.out.println(cmd.parse());
         }
 
         System.out.println("Exiting...");
     }
 
-    /**
-     * This function handles the given input according to present options and arguments
-     *
-     * @param parser
-     * @param input
-     */
-    private static void handleInput(OptionParser parser, String input) {
-        if (validAndNotHelpCmd(input)) {
+    private static void handleInput(Command cmd, String input) {
+        while(input.length()>0){
+            System.out.println("handling input with: "+input);
 
-            //parser parse the given input and divides into options and arguments
-            OptionSet opts = parser.parse(input.split(" "));
-            List nonOpts = opts.nonOptionArguments();
+            int ind = getFirstWordIndx(input);
+            String word = input.substring(0, ind);
 
-            //still working below
-            System.out.println("Verbose: " + opts.valueOf("v"));
-
-            if (nonOpts.size() != 3) {
-                for (Object o : nonOpts) {
-                    System.out.println(o.toString());
-                }
-                System.out.println("Invalid Command. here");
-//                printHelp("httpc");
-            } else {
-                String url = nonOpts.get(2).toString();
-
-                if (nonOpts.contains("get")) {
-
-                } else if (nonOpts.contains("post")) {
-
-                } else {
-
-                }
+            if(ind==input.length()){
+                input="";
+            }else{
+                input = input.substring(ind + 1);
             }
 
+            if (isOption(word)) {
+                if (needArgument(word)) {
+                    int argind = getFirstWordIndx(input);
+                    String arg = input.substring(0, argind);
+                    input = input.substring(argind + 1);
+                    if(arg.isEmpty()){
+                        cmd.printHelp(word);
+                        return;
+                    }
+                    handleOptionAndArg(cmd, word, arg);
+                } else {
+                    handleOption(cmd, word);
+                }
+
+            }else if(word.contains("http:")){
+                cmd.setUrl(word);
+            }
+            else{
+                cmd.printHelp(word);
+                return;
+            }
+        }
+
+
+
+    }
+
+    private static void handleOption(Command cmd, String option) {
+        if (option.equalsIgnoreCase("httpc")) {
+            cmd.setHttpc(true);
+        }
+        else if (option.equalsIgnoreCase("help")) {
+            cmd.setHelp(true);
+        }
+        else if (option.equalsIgnoreCase("get")) {
+            cmd.setGet(true);
+        }
+        else if (option.equalsIgnoreCase("post")) {
+            cmd.setPost(true);
+        }
+        else if (option.equalsIgnoreCase("-v")) {
+            cmd.setV(true);
         }
     }
 
-    /**
-     * This function returns true if given input is valid and not a help command, otherwise, false
-     *
-     * @param input
-     * @return
-     */
-    private static boolean validAndNotHelpCmd(String input) {
+    private static void handleOptionAndArg(Command cmd, String option, String arg) {
+        if (option.equalsIgnoreCase("-h")) {
+            cmd.setH(true);
+            cmd.addHArg(arg);
+        } else if (option.equalsIgnoreCase("-d")) {
+            cmd.setD(true);
+            cmd.setdArg(arg);
+        }
+        else if (option.equalsIgnoreCase("-f")) {
+            cmd.setF(true);
+            cmd.setfArg(arg);
+        }
+    }
 
-        if (input.startsWith("httpc get ") || input.startsWith("httpc post ")) {
-            if (input.contains("http:")) {
-                input.replace("http:", "-http:");
-            } else if (input.contains("'http:")) {
-                input.replace("'http:", "-http:");
-                input.substring(0, input.length() - 2);
-            }
+    private static boolean needArgument(String word) {
+        if (word.equalsIgnoreCase("-h")
+                || word.equalsIgnoreCase("-d")
+                || word.equalsIgnoreCase("-f")) {
             return true;
         }
-
-        String option = "httpc";
-
-        if (input.trim().equalsIgnoreCase("httpc help get")) {
-            option = "get";
-        } else if (input.trim().equalsIgnoreCase("httpc help post")) {
-            option = "post";
-        } else if (!input.startsWith("httpc help")) {
-            System.out.println("Invalid Command.");
-        }
-
-        printHelp(option);
         return false;
     }
+
+    private static boolean isOption(String word) {
+        if (word.equalsIgnoreCase("httpc")
+                || word.equalsIgnoreCase("help")
+                || word.equalsIgnoreCase("get")
+                || word.equalsIgnoreCase("post")
+                || word.equalsIgnoreCase("-v")
+                || word.equalsIgnoreCase("-h")
+                || word.equalsIgnoreCase("-d")
+                || word.equalsIgnoreCase("-f")) {
+            return true;
+        }
+        return false;
+    }
+
+    private static int getFirstWordIndx(String input) {
+        for (int i = 0; i < input.length(); i++) {
+            char delimiter = ' ';
+            if (delimiter == ' ' && input.charAt(i) == '\'') {
+                delimiter = '\'';
+                continue;
+            }
+            if (input.charAt(i) == delimiter) {
+                return i;
+            }
+
+        }
+        return input.length();
+    }
+
 
     /**
      * This function returns the next line on system console as string.
@@ -114,37 +148,7 @@ public class httpc {
         return (new Scanner(System.in)).nextLine();
     }
 
-    private static void printHelp(String option) {
-        if (option.equals("get")) {
-            System.out.println("\nusage: httpc get [-v] [-h key:value] URL\n" +
-                    "Get executes a HTTP GET request for a given URL.\n" +
-                    "   -v Prints the detail of the response such as protocol, status,\n" +
-                    "   and headers.\n" +
-                    "   -h key:value Associates headers to HTTP Request with the format\n" +
-                    "   'key:value'.");
-        } else if (option.equals("post")) {
-            System.out.println("\nusage: httpc post [-v] [-h key:value] [-d inline-data] [-f file] URL\n" +
-                    "Post executes a HTTP POST request for a given URL with inline data or from\n" +
-                    "file.\n" +
-                    "   -v Prints the detail of the response such as protocol, status,\n" +
-                    "   and headers.\n" +
-                    "   -h key:value Associates headers to HTTP Request with the format\n" +
-                    "   'key:value'.\n" +
-                    "   -d string Associates an inline data to the body HTTP POST request.\n" +
-                    "   -f file Associates the content of a file to the body HTTP POST\n" +
-                    "   request.\n" +
-                    "Either [-d] or [-f] can be used but not both.");
-        } else if (option.equals("httpc")) {
-            System.out.println("\nhttpc is a curl-like application but supports HTTP protocol only.\n" +
-                    "Usage:\n" +
-                    "   httpc command [arguments]\n" +
-                    "The commands are:\n" +
-                    "   get executes a HTTP GET request and prints the response.\n" +
-                    "   post executes a HTTP POST request and prints the response.\n" +
-                    "   help prints this screen.\n" +
-                    "Use \"httpc help [command]\" for more information about a command.");
-        } else {
-            System.out.println("Invalid Command.");
-        }
-    }
+
 }
+
+
