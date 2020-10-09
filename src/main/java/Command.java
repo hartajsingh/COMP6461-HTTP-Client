@@ -114,7 +114,7 @@ public class Command {
         this.d = d;
     }
 
-    private void setInvalid() {
+    public void setInvalid() {
         valid = false;
     }
 
@@ -142,9 +142,10 @@ public class Command {
     public void setfArg(String fArg) {
         this.fArg = fArg;
     }
-    public void setO(String fileName){
-        o =true;
-        this.fileName=fileName;
+
+    public void setO(String fileName) {
+        o = true;
+        this.fileName = fileName;
     }
 
 
@@ -157,7 +158,7 @@ public class Command {
         h = false;
         d = false;
         f = false;
-        o =false;
+        o = false;
         hArg = new HashMap<>();
         dArg = null;
         fArg = null;
@@ -165,7 +166,7 @@ public class Command {
 
         valid = true;
 
-        fileName=null;
+        fileName = null;
     }
 
 
@@ -185,7 +186,7 @@ public class Command {
         s += "v: " + v + ", ";
         s += "h: " + h + ", ";
         s += "d: " + f + ", ";
-        s+="o: "+ o +", ";
+        s += "o: " + o + ", ";
         s += "dArg: " + dArg + ", ";
         s += "hArg: {";
         for (String k : hArg.keySet()) {
@@ -194,7 +195,7 @@ public class Command {
         s += "}, ";
         s += "fArg: " + fArg + ", ";
         s += "url: " + url + ", ";
-        s+="fileName: "+fileName+", ";
+        s += "fileName: " + fileName + ", ";
         return s;
     }
 

@@ -80,12 +80,12 @@ public class HTTPClient {
             }
         }
 
-        if(cmd.isD()) {
-            String argD = cmd.getdArg();
-            argD = argD.substring(1, argD.length()-1);
-            send.println("Content-Length: " + argD.length());
+        if(cmd.isD()||cmd.isF()) {
+            String arg = cmd.isD()?cmd.getdArg(): cmd.getfArg();
+            arg = arg.substring(1, arg.length()-1);
+            send.println("Content-Length: " + arg.length());
             send.println("");
-            send.println(argD);
+            send.println(arg);
         }
 
         send.flush();

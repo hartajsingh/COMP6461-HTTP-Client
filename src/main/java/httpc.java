@@ -1,7 +1,5 @@
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Scanner;
 
 public class httpc {
@@ -18,16 +16,16 @@ public class httpc {
 
             if (cmd.checkValidity()) {
                 HTTPClient httpClient = new HTTPClient();
-                String output=httpClient.getOutput(cmd);
+                String output = httpClient.getOutput(cmd);
 
-                if(cmd.outToFile()){
-                    BufferedWriter br=new BufferedWriter(new FileWriter(cmd.getFileName()));
+                if (cmd.outToFile()) {
+                    BufferedWriter br = new BufferedWriter(new FileWriter(cmd.getFileName()));
                     br.write(output);
                     br.close();
+                } else {
+                    System.out.println(output);
                 }
-                else{System.out.println(cmd.toString()+"\n"+output);}
-            }
-            else {
+            } else {
                 System.out.println("Invalid Command.");
             }
 
@@ -36,23 +34,22 @@ public class httpc {
         System.out.println("Exiting...");
     }
 
-    private static void handleInput(Command cmd, String input) {
+    private static void handleInput(Command cmd, String input) throws IOException {
 
         while (input.length() > 0 && cmd.isValid()) {
 
             int ind = getFirstWordIndx(input);
             String word;
 
-            if (ind < input.length()&&input.charAt(ind) == '\'') {
+            if (ind < input.length() && input.charAt(ind) == '\'') {
                 ind++;
             }
             if (ind == input.length()) {
                 word = input;
                 input = "";
-            }
-            else{
+            } else {
 
-                word=input.substring(0, ind);
+                word = input.substring(0, ind);
                 input = input.substring(ind + 1);
             }
 
@@ -61,7 +58,7 @@ public class httpc {
                     int argind = getFirstWordIndx(input);
                     String arg;
 
-                    if (argind < input.length()&&input.charAt(argind) == '\'') {
+                    if (argind < input.length() && input.charAt(argind) == '\'') {
                         argind++;
                     }
                     if (argind == input.length()) {
@@ -109,7 +106,7 @@ public class httpc {
         }
     }
 
-    private static void handleOptionAndArg(Command cmd, String option, String arg) {
+    private static void handleOptionAndArg(Command cmd, String option, String arg){
         if (option.equalsIgnoreCase("-h")) {
             cmd.setH(true);
             cmd.addHArg(arg);
@@ -118,9 +115,22 @@ public class httpc {
             cmd.setdArg(arg);
         } else if (option.equalsIgnoreCase("-f")) {
             cmd.setF(true);
-            cmd.setfArg(arg);
-        }
-        else if (option.equalsIgnoreCase("-o")) {
+            try{
+            BufferedReader br=new BufferedReader(new FileReader(arg));
+            arg="\'";
+            String s=br.readLine();
+            while(s!=null){
+                arg+=s;
+                s=br.readLine();
+            }
+            }
+            catch(Exception e){
+                System.out.println("Error reading file.");
+                cmd.setInvalid();
+            }
+
+            cmd.setfArg(arg+"\'");
+        } else if (option.equalsIgnoreCase("-o")) {
             cmd.setO(arg);
         }
     }
