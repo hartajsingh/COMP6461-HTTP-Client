@@ -40,7 +40,11 @@ public class HTTPClient {
             return reply;
         } else {
             String[] splitReply = reply.split("\\{", 2);
-            return splitReply[1].trim();
+            if(splitReply.length == 1) {
+                return reply;
+            } else {
+                return splitReply[1].trim();
+            }
         }
     }
 
@@ -72,7 +76,11 @@ public class HTTPClient {
 
 
     private String optionPost() throws IOException {
-        send.println("POST " + url + " HTTP/1.0");
+        String hostName = url.getHost();
+        int index = (url.toString().indexOf(hostName)) + hostName.length();
+        String path = url.toString().substring(index);
+        send.println("POST " + path + " HTTP/1.0");
+        send.println("Host: " + hostName);
         if (cmd.isH()) {
             HashMap<String, String> headerInfo = cmd.gethArg();
             for (String temp : headerInfo.keySet()) {
@@ -80,12 +88,16 @@ public class HTTPClient {
             }
         }
 
-        if(cmd.isD()||cmd.isF()) {
+        if(cmd.isD() || cmd.isF()) {
             String arg = cmd.isD()?cmd.getdArg(): cmd.getfArg();
-            arg = arg.substring(1, arg.length()-1);
-            send.println("Content-Length: " + arg.length());
-            send.println("");
-            send.println(arg);
+            if(arg.startsWith("'") || arg.startsWith("\"")) {
+                arg = arg.substring(1, arg.length() - 1);
+                send.println("Content-Length: " + arg.length());
+                send.println("");
+                send.println(arg);
+            } else {
+                send.println(arg);
+            }
         }
 
         send.flush();
@@ -105,8 +117,11 @@ public class HTTPClient {
     }
 
     private String optionGet() throws IOException {
-
-        send.println("GET " + url + " HTTP/1.0");
+        String hostName = url.getHost();
+        int index = (url.toString().indexOf(hostName)) + hostName.length();
+        String path = url.toString().substring(index);
+        send.println("GET " + path + " HTTP/1.0");
+        send.println("Host: " + hostName);
         if (cmd.isH()) {
             HashMap<String, String> headerInfo = cmd.gethArg();
             for (String temp : headerInfo.keySet()) {
