@@ -116,7 +116,6 @@ public class Command {
 
     private void setInvalid() {
         valid = false;
-//        System.out.println("Invalid Command.");
     }
 
 

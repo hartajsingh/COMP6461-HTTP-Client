@@ -39,7 +39,6 @@ public class httpc {
     private static void handleInput(Command cmd, String input) {
 
         while (input.length() > 0 && cmd.isValid()) {
-//            System.out.println("handling input with: " + input);
 
             int ind = getFirstWordIndx(input);
             String word;

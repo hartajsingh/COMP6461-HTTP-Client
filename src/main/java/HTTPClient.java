@@ -37,9 +37,9 @@ public class HTTPClient {
         } while (++cycle < redirectCycles && isRedirectResponse(reply));
 
         if (cmd.isV()) {
-            return reply.toString();
+            return reply;
         } else {
-            String[] splitReply = reply.toString().split("\\{", 2);
+            String[] splitReply = reply.split("\\{", 2);
             return splitReply[1].trim();
         }
     }
@@ -76,18 +76,16 @@ public class HTTPClient {
         if (cmd.isH()) {
             HashMap<String, String> headerInfo = cmd.gethArg();
             for (String temp : headerInfo.keySet()) {
-                System.out.println(temp + ": " + headerInfo.get(temp));
                 send.println(temp + ": " + headerInfo.get(temp));
             }
         }
-        send.println("");
 
         if(cmd.isD()) {
             String argD = cmd.getdArg();
-            argD = argD.substring(2, argD.length()-2);
-            String[] splitD = argD.split(":");
-            splitD[0] = splitD[0].trim().substring(1, splitD[0].length()-1);
-            send.println(splitD[0] + "=" + splitD[1].trim());
+            argD = argD.substring(1, argD.length()-1);
+            send.println("Content-Length: " + argD.length());
+            send.println("");
+            send.println(argD);
         }
 
         send.flush();
@@ -112,7 +110,6 @@ public class HTTPClient {
         if (cmd.isH()) {
             HashMap<String, String> headerInfo = cmd.gethArg();
             for (String temp : headerInfo.keySet()) {
-                System.out.println(temp + ": " + headerInfo.get(temp));
                 send.println(temp + ": " + headerInfo.get(temp));
             }
         }
