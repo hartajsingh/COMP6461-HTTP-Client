@@ -14,17 +14,52 @@ public class HTTPClient {
     final int PORT = 80;
     private PrintWriter send;
     private BufferedReader receive;
+    final private int redirectCycles = 3;
+
 
     public String getOutput(Command cmd) throws IOException {
-        this.cmd = cmd;
         String reply = "";
-        connectSocket();
-        if (cmd.isGet()) {
-            reply = optionGet();
-        } else if (cmd.isPost()) {
-            reply = optionPost();
+        this.cmd = cmd;
+
+        int cycle = 0;
+        do {
+
+            if (!reply.isEmpty()) {
+                cmd.setUrl(extractUrl(reply));
+            }
+            reply = "";
+            connectSocket();
+            if (cmd.isGet()) {
+                reply = optionGet();
+            } else if (cmd.isPost()) {
+                reply = optionPost();
+            }
+        } while (++cycle < redirectCycles && isRedirectResponse(reply));
+
+        if (cmd.isV()) {
+            return reply.toString();
+        } else {
+            String[] splitReply = reply.toString().split("\\{", 2);
+            return splitReply[1].trim();
         }
-        return reply;
+    }
+
+    private String extractUrl(String reply) {
+        String url = "";
+        if (reply.contains("Location: ")) {
+            int i = reply.indexOf("Location: ") + 10;
+            while (reply.charAt(i) != '\n') {
+                url += reply.charAt(i++);
+            }
+        }
+        return url;
+    }
+
+    private boolean isRedirectResponse(String reply) {
+        if (reply.charAt(9) == '3') {
+            return true;
+        }
+        return false;
     }
 
     private void connectSocket() throws IOException {
@@ -41,6 +76,7 @@ public class HTTPClient {
     }
 
     private String optionGet() throws IOException {
+
         send.println("GET " + url + " HTTP/1.0");
         if (cmd.isH()) {
             HashMap<String, String> headerInfo = cmd.gethArg();
@@ -64,11 +100,6 @@ public class HTTPClient {
             }
         }
 
-        if (cmd.isV()) {
-            return reply.toString();
-        } else {
-            String[] splitReply = reply.toString().split("\\{", 2);
-            return splitReply[1].trim();
-        }
+        return reply.toString();
     }
 }
