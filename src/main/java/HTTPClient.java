@@ -103,12 +103,7 @@ public class HTTPClient {
                 break;
             }
         }
-        if (cmd.isV()) {
-            return reply.toString();
-        } else {
-            String[] splitReply = reply.toString().split("\\{", 2);
-            return splitReply[1].trim();
-        }
+        return reply.toString();
     }
 
     private String optionGet() throws IOException {
