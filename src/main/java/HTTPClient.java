@@ -71,8 +71,44 @@ public class HTTPClient {
     }
 
 
-    private String optionPost() {
-        return "fudu";
+    private String optionPost() throws IOException {
+        send.println("POST " + url + " HTTP/1.0");
+        if (cmd.isH()) {
+            HashMap<String, String> headerInfo = cmd.gethArg();
+            for (String temp : headerInfo.keySet()) {
+                System.out.println(temp + ": " + headerInfo.get(temp));
+                send.println(temp + ": " + headerInfo.get(temp));
+            }
+        }
+        send.println("");
+
+        if(cmd.isD()) {
+            String argD = cmd.getdArg();
+            argD = argD.substring(2, argD.length()-2);
+            String[] splitD = argD.split(":");
+            splitD[0] = splitD[0].trim().substring(1, splitD[0].length()-1);
+            send.println(splitD[0] + "=" + splitD[1].trim());
+        }
+
+        send.flush();
+
+        StringBuffer reply = new StringBuffer();
+        while (true) {
+            if (receive.ready()) {
+                int temp = receive.read();
+                while (temp != -1) {
+                    reply.append((char) temp);
+                    temp = receive.read();
+                }
+                break;
+            }
+        }
+        if (cmd.isV()) {
+            return reply.toString();
+        } else {
+            String[] splitReply = reply.toString().split("\\{", 2);
+            return splitReply[1].trim();
+        }
     }
 
     private String optionGet() throws IOException {
