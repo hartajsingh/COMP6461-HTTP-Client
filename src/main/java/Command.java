@@ -50,21 +50,21 @@ public class Command {
 
 
     public void setD(boolean d) {
-        if(get|f|!post){
+        if (get | f | !post) {
             setInvalid();
         }
         this.d = d;
     }
 
     private void setInvalid() {
-        valid=false;
+        valid = false;
         System.out.println("Invalid Command.");
         printHelp();
     }
 
 
     public void setF(boolean f) {
-        if(get|d|!post){
+        if (get | d | !post) {
             setInvalid();
         }
         this.f = f;
@@ -72,7 +72,7 @@ public class Command {
 
 
     public void setUrl(String url) {
-        if((!get || post) && (get || !post)){
+        if ((!get || post) && (get || !post)) {
             setInvalid();
         }
         this.url = url.replace("'", "");
@@ -97,19 +97,19 @@ public class Command {
         h = false;
         d = false;
         f = false;
-        hArg = null;
+        hArg = new HashMap<>();
         dArg = null;
         fArg = null;
         url = null;
 
-        valid=true;
+        valid = true;
     }
 
 
     public void addHArg(String arg) {
-        String[] a=arg.split(":");
-        for(int i=0;i<a.length;i=i+2){
-            hArg.put(a[i],a[i+1]);
+        String[] a = arg.split(":");
+        for (int i = 0; i < a.length; i = i + 2) {
+            hArg.put(a[i], a[i + 1]);
         }
     }
 
@@ -123,13 +123,18 @@ public class Command {
         s += "h: " + h + ", ";
         s += "d: " + f + ", ";
         s += "dArg: " + dArg + ", ";
+        s += "hArg: {";
+        for (String k : hArg.keySet()) {
+            s += k + ":" + hArg.get(k) + " ";
+        }
+        s += "}, ";
         s += "fArg: " + fArg + ", ";
         s += "url: " + url + ", ";
         return s;
     }
 
     public boolean checkValidity() {
-        if(!valid)
+        if (!valid)
             return false;
         String option = "";
         if (!httpc) {
@@ -180,7 +185,8 @@ public class Command {
             printHelp();
         }
     }
-    public void printHelp(){
+
+    public void printHelp() {
         System.out.println("\nhttpc is a curl-like application but supports HTTP protocol only.\n" +
                 "Usage:\n" +
                 "   httpc command [arguments]\n" +

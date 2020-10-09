@@ -1,15 +1,8 @@
 
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Scanner;
 
-import static java.util.Arrays.asList;
-
 public class httpc {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         String input;
 
@@ -75,7 +68,7 @@ public class httpc {
         }
 
         if (cmd.checkValidity()) {
-            HTTPClient client = new HTTPClient(cmd);
+            HTTPClient httpClient = new HTTPClient(cmd);
         }
 
     }
@@ -149,8 +142,6 @@ public class httpc {
 
     /**
      * This function returns the next line on system console as string.
-     *
-     * @return
      */
     private static String readCommand() {
         System.out.println("\nEnter your command below or press 'RETURN' key to exit.");
