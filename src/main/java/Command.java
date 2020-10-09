@@ -2,6 +2,59 @@ import java.util.HashMap;
 
 public class Command {
     private boolean httpc;
+
+    public boolean isHttpc() {
+        return httpc;
+    }
+
+    public boolean isHelp() {
+        return help;
+    }
+
+    public boolean isGet() {
+        return get;
+    }
+
+    public boolean isPost() {
+        return post;
+    }
+
+    public boolean isV() {
+        return v;
+    }
+
+    public boolean isH() {
+        return h;
+    }
+
+    public boolean isD() {
+        return d;
+    }
+
+    public boolean isF() {
+        return f;
+    }
+
+    public HashMap<String, String> gethArg() {
+        return hArg;
+    }
+
+    public String getdArg() {
+        return dArg;
+    }
+
+    public String getfArg() {
+        return fArg;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public boolean isO() {
+        return o;
+    }
+
     private boolean help;
     private boolean get;
     private boolean post;
