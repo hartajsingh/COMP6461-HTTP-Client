@@ -1,19 +1,36 @@
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class httpc {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         String input;
 
         //read input until client press 'return' key
         while ((input = readCommand()).length() > 0) {
-//            System.out.println("Input: " + input);
             Command cmd = new Command();
-            input.replace("--", "-");
+            input = input.replace("--", "-");
 
             handleInput(cmd, input);
-            System.out.println(cmd.toString());
+
+            if (cmd.checkValidity()) {
+                HTTPClient httpClient = new HTTPClient();
+                String output=httpClient.getOutput(cmd);
+
+                if(cmd.outToFile()){
+                    BufferedWriter br=new BufferedWriter(new FileWriter(cmd.getFileName()));
+                    br.write(output);
+                    br.close();
+                }
+                else{System.out.println(cmd.toString()+"\n"+output);}
+            }
+            else {
+                System.out.println("Invalid Command.");
+            }
+
         }
 
         System.out.println("Exiting...");
@@ -25,11 +42,18 @@ public class httpc {
 //            System.out.println("handling input with: " + input);
 
             int ind = getFirstWordIndx(input);
-            String word = input.substring(0, ind);
+            String word;
 
+            if (ind < input.length()&&input.charAt(ind) == '\'') {
+                ind++;
+            }
             if (ind == input.length()) {
+                word = input;
                 input = "";
-            } else {
+            }
+            else{
+
+                word=input.substring(0, ind);
                 input = input.substring(ind + 1);
             }
 
@@ -37,13 +61,15 @@ public class httpc {
                 if (needArgument(word)) {
                     int argind = getFirstWordIndx(input);
                     String arg;
-                    if (input.charAt(argind) == '\'') {
+
+                    if (argind < input.length()&&input.charAt(argind) == '\'') {
                         argind++;
                     }
                     if (argind == input.length()) {
                         arg = input;
                         input = "";
                     } else {
+
                         arg = input.substring(0, argind);
                         input = input.substring(argind + 1);
                     }
@@ -62,14 +88,11 @@ public class httpc {
             } else if (word.contains("http:")) {
                 cmd.setUrl(word);
             } else {
-                cmd.printHelp(word);
+                System.out.println("Invalid Command.");
                 return;
             }
         }
 
-        if (cmd.checkValidity()) {
-            HTTPClient httpClient = new HTTPClient(cmd);
-        }
 
     }
 
@@ -98,12 +121,16 @@ public class httpc {
             cmd.setF(true);
             cmd.setfArg(arg);
         }
+        else if (option.equalsIgnoreCase("-o")) {
+            cmd.setO(arg);
+        }
     }
 
     private static boolean needArgument(String word) {
         if (word.equalsIgnoreCase("-h")
                 || word.equalsIgnoreCase("-d")
-                || word.equalsIgnoreCase("-f")) {
+                || word.equalsIgnoreCase("-f")
+                || word.equalsIgnoreCase("-o")) {
             return true;
         }
         return false;
@@ -117,7 +144,8 @@ public class httpc {
                 || word.equalsIgnoreCase("-v")
                 || word.equalsIgnoreCase("-h")
                 || word.equalsIgnoreCase("-d")
-                || word.equalsIgnoreCase("-f")) {
+                || word.equalsIgnoreCase("-f")
+                || word.equalsIgnoreCase("-o")) {
             return true;
         }
         return false;

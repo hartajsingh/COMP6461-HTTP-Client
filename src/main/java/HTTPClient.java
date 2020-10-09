@@ -6,8 +6,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 public class HTTPClient {
-    public HTTPClient(Command cmd) {
-    }
+
 
     public static void main(String[] args) throws IOException {
         final int PORT = 80;
@@ -43,4 +42,7 @@ public class HTTPClient {
         socket.close();
     }
 
+    public String getOutput(Command cmd) {
+        return "fudu";
+    }
 }

@@ -16,6 +16,8 @@ public class Command {
     private String url;
 
     private boolean valid;
+    private boolean o;
+    private String fileName;
 
     public void setHttpc(boolean httpc) {
         this.httpc = httpc;
@@ -26,11 +28,13 @@ public class Command {
     }
 
     public void setGet(boolean get) {
+
         this.get = get;
     }
 
 
     public void setPost(boolean post) {
+
         this.post = post;
     }
 
@@ -41,6 +45,7 @@ public class Command {
 
 
     public void setH(boolean h) {
+
         this.h = h;
         if (hArg == null) {
             hArg = new HashMap<>();
@@ -58,8 +63,7 @@ public class Command {
 
     private void setInvalid() {
         valid = false;
-        System.out.println("Invalid Command.");
-        printHelp();
+//        System.out.println("Invalid Command.");
     }
 
 
@@ -86,6 +90,10 @@ public class Command {
     public void setfArg(String fArg) {
         this.fArg = fArg;
     }
+    public void setO(String fileName){
+        o =true;
+        this.fileName=fileName;
+    }
 
 
     public Command() {
@@ -97,12 +105,15 @@ public class Command {
         h = false;
         d = false;
         f = false;
+        o =false;
         hArg = new HashMap<>();
         dArg = null;
         fArg = null;
         url = null;
 
         valid = true;
+
+        fileName=null;
     }
 
 
@@ -122,6 +133,7 @@ public class Command {
         s += "v: " + v + ", ";
         s += "h: " + h + ", ";
         s += "d: " + f + ", ";
+        s+="o: "+ o +", ";
         s += "dArg: " + dArg + ", ";
         s += "hArg: {";
         for (String k : hArg.keySet()) {
@@ -130,12 +142,12 @@ public class Command {
         s += "}, ";
         s += "fArg: " + fArg + ", ";
         s += "url: " + url + ", ";
+        s+="fileName: "+fileName+", ";
         return s;
     }
 
     public boolean checkValidity() {
-        if (!valid)
-            return false;
+
         String option = "";
         if (!httpc) {
             setInvalid();
@@ -153,7 +165,8 @@ public class Command {
         } else if (url == null) {
             setInvalid();
         }
-
+        if (!valid)
+            return false;
         return option.isEmpty();
     }
 
@@ -179,25 +192,29 @@ public class Command {
                     "   request.\n" +
                     "Either [-d] or [-f] can be used but not both.");
         } else if (option.equals("httpc")) {
-            printHelp();
+            System.out.println("\nhttpc is a curl-like application but supports HTTP protocol only.\n" +
+                    "Usage:\n" +
+                    "   httpc command [arguments]\n" +
+                    "The commands are:\n" +
+                    "   get executes a HTTP GET request and prints the response.\n" +
+                    "   post executes a HTTP POST request and prints the response.\n" +
+                    "   help prints this screen.\n" +
+                    "Use \"httpc help [command]\" for more information about a command.");
         } else {
             System.out.println("Invalid Command.");
-            printHelp();
         }
     }
 
-    public void printHelp() {
-        System.out.println("\nhttpc is a curl-like application but supports HTTP protocol only.\n" +
-                "Usage:\n" +
-                "   httpc command [arguments]\n" +
-                "The commands are:\n" +
-                "   get executes a HTTP GET request and prints the response.\n" +
-                "   post executes a HTTP POST request and prints the response.\n" +
-                "   help prints this screen.\n" +
-                "Use \"httpc help [command]\" for more information about a command.");
-    }
 
     public boolean isValid() {
         return valid;
+    }
+
+    public boolean outToFile() {
+        return o;
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 }
