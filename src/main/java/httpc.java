@@ -15,7 +15,7 @@ public class httpc {
 
         //read input until client press 'return' key
         while ((input = readCommand()).length() > 0) {
-            System.out.println("Input: " + input);
+//            System.out.println("Input: " + input);
             Command cmd = new Command();
             input.replace("--", "-");
 
@@ -27,8 +27,9 @@ public class httpc {
     }
 
     private static void handleInput(Command cmd, String input) {
-        while (input.length() > 0) {
-            System.out.println("handling input with: " + input);
+
+        while (input.length() > 0 && cmd.isValid()) {
+//            System.out.println("handling input with: " + input);
 
             int ind = getFirstWordIndx(input);
             String word = input.substring(0, ind);
@@ -42,12 +43,24 @@ public class httpc {
             if (isOption(word)) {
                 if (needArgument(word)) {
                     int argind = getFirstWordIndx(input);
-                    String arg = input.substring(0, argind);
-                    input = input.substring(argind + 1);
+                    String arg;
+                    if (input.charAt(argind) == '\'') {
+                        argind++;
+                    }
+                    if (argind == input.length()) {
+                        arg = input;
+                        input = "";
+                    } else {
+                        arg = input.substring(0, argind);
+                        input = input.substring(argind + 1);
+                    }
+
                     if (arg.isEmpty()) {
                         cmd.printHelp(word);
                         return;
                     }
+
+
                     handleOptionAndArg(cmd, word, arg);
                 } else {
                     handleOption(cmd, word);
@@ -61,7 +74,7 @@ public class httpc {
             }
         }
 
-        if (cmd.isValid()) {
+        if (cmd.checkValidity()) {
             HTTPClient client = new HTTPClient(cmd);
         }
 
@@ -118,8 +131,9 @@ public class httpc {
     }
 
     private static int getFirstWordIndx(String input) {
+        char delimiter = ' ';
         for (int i = 0; i < input.length(); i++) {
-            char delimiter = ' ';
+
             if (delimiter == ' ' && input.charAt(i) == '\'') {
                 delimiter = '\'';
                 continue;

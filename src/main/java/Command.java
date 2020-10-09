@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class Command {
     private boolean httpc;
@@ -11,10 +10,12 @@ public class Command {
     private boolean d;
     private boolean f;
 
-    private List<String> hArg;
+    private HashMap<String, String> hArg;
     private String dArg;
     private String fArg;
     private String url;
+
+    private boolean valid;
 
     public void setHttpc(boolean httpc) {
         this.httpc = httpc;
@@ -42,23 +43,38 @@ public class Command {
     public void setH(boolean h) {
         this.h = h;
         if (hArg == null) {
-            hArg = new ArrayList<>();
+            hArg = new HashMap<>();
         }
 
     }
 
 
     public void setD(boolean d) {
+        if(get|f|!post){
+            setInvalid();
+        }
         this.d = d;
+    }
+
+    private void setInvalid() {
+        valid=false;
+        System.out.println("Invalid Command.");
+        printHelp();
     }
 
 
     public void setF(boolean f) {
+        if(get|d|!post){
+            setInvalid();
+        }
         this.f = f;
     }
 
 
     public void setUrl(String url) {
+        if((!get || post) && (get || !post)){
+            setInvalid();
+        }
         this.url = url.replace("'", "");
     }
 
@@ -85,11 +101,16 @@ public class Command {
         dArg = null;
         fArg = null;
         url = null;
+
+        valid=true;
     }
 
 
     public void addHArg(String arg) {
-        hArg.add(arg);
+        String[] a=arg.split(":");
+        for(int i=0;i<a.length;i=i+2){
+            hArg.put(a[i],a[i+1]);
+        }
     }
 
     public String toString() {
@@ -107,10 +128,12 @@ public class Command {
         return s;
     }
 
-    public boolean isValid() {
+    public boolean checkValidity() {
+        if(!valid)
+            return false;
         String option = "";
         if (!httpc) {
-            option = "invalid";
+            setInvalid();
         } else if (help) {
             if (get) {
                 option = "get";
@@ -119,19 +142,14 @@ public class Command {
             } else {
                 option = "httpc";
             }
-
-        } else if ((!get || post) && (get || !post)) {
-            option = "invalid";
-        } else if (url == null) {
-            option = "invalid";
-        }
-
-        if (!option.isEmpty()) {
             printHelp(option);
-            return false;
+        } else if ((!get || post) && (get || !post)) {
+            setInvalid();
+        } else if (url == null) {
+            setInvalid();
         }
 
-        return true;
+        return option.isEmpty();
     }
 
 
@@ -156,17 +174,24 @@ public class Command {
                     "   request.\n" +
                     "Either [-d] or [-f] can be used but not both.");
         } else if (option.equals("httpc")) {
-            System.out.println("\nhttpc is a curl-like application but supports HTTP protocol only.\n" +
-                    "Usage:\n" +
-                    "   httpc command [arguments]\n" +
-                    "The commands are:\n" +
-                    "   get executes a HTTP GET request and prints the response.\n" +
-                    "   post executes a HTTP POST request and prints the response.\n" +
-                    "   help prints this screen.\n" +
-                    "Use \"httpc help [command]\" for more information about a command.");
+            printHelp();
         } else {
             System.out.println("Invalid Command.");
-            printHelp("httpc");
+            printHelp();
         }
+    }
+    public void printHelp(){
+        System.out.println("\nhttpc is a curl-like application but supports HTTP protocol only.\n" +
+                "Usage:\n" +
+                "   httpc command [arguments]\n" +
+                "The commands are:\n" +
+                "   get executes a HTTP GET request and prints the response.\n" +
+                "   post executes a HTTP POST request and prints the response.\n" +
+                "   help prints this screen.\n" +
+                "Use \"httpc help [command]\" for more information about a command.");
+    }
+
+    public boolean isValid() {
+        return valid;
     }
 }

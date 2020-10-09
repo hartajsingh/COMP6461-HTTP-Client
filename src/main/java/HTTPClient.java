@@ -43,9 +43,4 @@ public class HTTPClient {
         socket.close();
     }
 
-    public String executeCmd() {
-        String output = "";
-
-        return output;
-    }
 }
