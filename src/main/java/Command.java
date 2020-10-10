@@ -201,6 +201,11 @@ public class Command {
 
     public boolean checkValidity() {
 
+        if (!valid) {
+            System.out.println("Invalid Command.");
+            return false;
+        }
+
         String option = "";
         if (!httpc) {
             setInvalid();
@@ -215,11 +220,12 @@ public class Command {
             printHelp(option);
         } else if ((!get || post) && (get || !post)) {
             setInvalid();
+            System.out.println("Invalid Command.");
+            return false;
         } else if (url == null) {
             setInvalid();
         }
-        if (!valid)
-            return false;
+
         return option.isEmpty();
     }
 
@@ -253,8 +259,6 @@ public class Command {
                     "   post executes a HTTP POST request and prints the response.\n" +
                     "   help prints this screen.\n" +
                     "Use \"httpc help [command]\" for more information about a command.");
-        } else {
-            System.out.println("Invalid Command.");
         }
     }
 

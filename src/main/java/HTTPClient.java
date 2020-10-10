@@ -16,7 +16,7 @@ public class HTTPClient {
     private BufferedReader receive;
     final private int redirectCycles = 3;
 
-
+    //httpc get -v http://www.socengine.com/seo/
     public String getOutput(Command cmd) throws IOException {
         String reply = "";
         this.cmd = cmd;
@@ -26,7 +26,9 @@ public class HTTPClient {
 
             if (!reply.isEmpty()) {
                 cmd.setUrl(extractUrl(reply));
+                System.out.println("Redirecting to: " + cmd.getUrl());
             }
+
             reply = "";
             connectSocket();
             if (cmd.isGet()) {
@@ -34,7 +36,7 @@ public class HTTPClient {
             } else if (cmd.isPost()) {
                 reply = optionPost();
             }
-        } while (++cycle < redirectCycles && isRedirectResponse(reply));
+        } while (++cycle <= redirectCycles && isRedirectResponse(reply));
 
         if (cmd.isV()) {
             return reply;
@@ -143,7 +145,7 @@ public class HTTPClient {
                 break;
             }
         }
-
+        send.println("");
         return reply.toString();
     }
 }

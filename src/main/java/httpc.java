@@ -25,8 +25,6 @@ public class httpc {
                 } else {
                     System.out.println(output);
                 }
-            } else {
-                System.out.println("Invalid Command.");
             }
 
         }
@@ -84,7 +82,7 @@ public class httpc {
             } else if (word.contains("http:")) {
                 cmd.setUrl(word);
             } else {
-                System.out.println("Invalid Command.");
+                cmd.setInvalid();
                 return;
             }
         }
