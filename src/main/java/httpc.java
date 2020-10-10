@@ -181,8 +181,6 @@ public class httpc {
         System.out.println("\nEnter your command below or press 'RETURN' key to exit.");
         return (new Scanner(System.in)).nextLine();
     }
-
-
 }
 
 

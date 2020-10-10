@@ -17,14 +17,21 @@
                     <target>7</target>
                 </configuration>
             </plugin>
-        </plugins>
-    </build>
 
-    <!--    <dependencies>-->
-<!--        <dependency>-->
-<!--            <groupId>net.sf.jopt-simple</groupId>-->
-<!--            <artifactId>jopt-simple</artifactId>-->
-<!--            <version>6.0-alpha-3</version>-->
-<!--        </dependency>-->
-<!--    </dependencies>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>httpc</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+        <finalName>httpc</finalName>
+    </build>
 </project>

@@ -16,7 +16,6 @@ public class HTTPClient {
     private BufferedReader receive;
     final private int redirectCycles = 3;
 
-    //httpc get -v http://www.socengine.com/seo/
     public String getOutput(Command cmd) throws IOException {
         String reply = "";
         this.cmd = cmd;
