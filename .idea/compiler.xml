@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="HTTP" />
+        <module name="HTTPClient" />
         <module name="COMP6461-LA1" />
       </profile>
     </annotationProcessing>
