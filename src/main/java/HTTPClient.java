@@ -11,7 +11,7 @@ public class HTTPClient {
     private Command cmd;
     private URL url;
     private Socket socket;
-    final int PORT = 80;
+    final int PORT = 8080;
     private PrintWriter send;
     private BufferedReader receive;
     final private int redirectCycles = 3;
@@ -38,7 +38,7 @@ public class HTTPClient {
         } while (++cycle <= redirectCycles && isRedirectResponse(reply));
 
         if (cmd.isV()) {
-            return reply;
+            return reply.substring(0,reply.length()-1);
         } else {
             String[] splitReply = reply.split("\r\n\r\n", 2);
             if (splitReply.length == 1) {

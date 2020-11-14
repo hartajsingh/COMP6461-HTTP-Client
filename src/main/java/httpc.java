@@ -16,8 +16,9 @@ public class httpc {
 
             if (cmd.checkValidity()) {
                 HTTPClient httpClient = new HTTPClient();
+//                HTTPClient httpClient2 = new HTTPClient();
+//                String output2 = httpClient2.getOutput(cmd);
                 String output = httpClient.getOutput(cmd);
-
                 if (cmd.outToFile()) {
                     BufferedWriter br = new BufferedWriter(new FileWriter(cmd.getFileName()));
                     br.write(output);
